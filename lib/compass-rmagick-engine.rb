@@ -1,4 +1,4 @@
-require 'rmagick'
+require 'RMagick'
 
 module Compass
   module SassExtensions
@@ -6,8 +6,9 @@ module Compass
       class RmagickEngine < Compass::SassExtensions::Sprites::Engine
 
         def construct_sprite
-          @canvas = Magick::Image.new(width, height)
-          @canvas.background_color = 'none'
+          @canvas = Magick::Image.new(width, height) {
+            self.background_color = 'none'
+          }
           @canvas.format = 'PNG24'
           images.each do |image|
             input_png = Magick::Image.read(image.file).first
@@ -22,16 +23,16 @@ module Compass
             end
           end
           @canvas
-        end 
-        
+        end
+
         def save(filename)
           if canvas.nil?
             construct_sprite
           end
-          
+
           canvas.write(filename)
         end
-        
+
         private #===============================================================================>
 
         def composite_images(dest_image, src_image, x, y)
@@ -42,8 +43,9 @@ module Compass
           image.composite!(src_image, x, y, Magick::CopyCompositeOp)
           image
         end
-        
+
       end
     end
   end
 end
+
